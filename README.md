@@ -62,7 +62,7 @@ Clone this full repository to your HPC (only 224kb)
 4. **Submit jobs** in the order documented below. **IMPORTANT** -Adjust --array at the top of each script prior to submission to match your trait count. [See Calculating '--arrary' Sizes below]
 5. *(Optional)* **Edit paths at the top of `prs-qc.r`** and run it for score inspection, standardization, and plots
 
-**`config.sh` is the only file you need to edit for the core pipeline.** The `prs-qc.r` script is an example post-processing step with its own path variables at the top.
+**`config.sh` is the only file you need to edit for the core pipeline (plus --array sizes in scripts).** The `prs-qc.r` script is an example post-processing step with its own path variables at the top.
 
 ## GWAS Input Format
 

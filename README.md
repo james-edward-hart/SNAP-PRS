@@ -12,7 +12,7 @@ If you use this pipeline, please cite the following:
 
 **This pipeline:**
 
-Cite the Zenodo DOI for this repository: [![DOI](https://zenodo.org/badge/DOI/XXXX.svg)](https://doi.org/XXXX) *(update with your Zenodo DOI after linking)* Alternatively, contact me at James.Hart@vcuhealth.org for consultation. 
+Cite the Zenodo DOI for this repository: [![DOI](https://zenodo.org/badge/1193776964.svg)](https://doi.org/10.5281/zenodo.19258447) Alternatively, contact me at James.Hart@vcuhealth.org for consultation. 
 
 
 **Please also cite the tools and data this pipeline depends on:**

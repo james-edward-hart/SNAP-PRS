@@ -53,6 +53,7 @@ This pipeline assumes **GRCh37 (hg19)**. If your data is on GRCh38, you must eit
 
 ## Quick Start
 
+Clone this full repository to your HPC (only 224kb)
 1. **Edit `config.sh`** — Set all paths and software locations
 2. **Prepare GWAS summary stats** in the required format (see below)
 3. **Populate trait CSVs** — `traits_prscs.csv` and `traits_prscsx.csv` (shipped with examples — replace with your own)

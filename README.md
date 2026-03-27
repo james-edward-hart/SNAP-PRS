@@ -1,4 +1,4 @@
-# SNAP-PRS (SLURM Native Automated Pipeline - Polygenic Risk Scores)
+# SNAP-PRS 
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 

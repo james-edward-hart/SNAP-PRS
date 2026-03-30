@@ -4,7 +4,7 @@
 #SBATCH --error=Logs/%x_%A_%a.err
 #SBATCH --time=5-00:00:00
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=100G
+#SBATCH --mem=120G
 #SBATCH --partition=normal
 #SBATCH --array=1-220
 

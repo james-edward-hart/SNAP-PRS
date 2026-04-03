@@ -4,7 +4,7 @@
 
 **Author:** James E. Hart (Jimmy) — [James.Hart@VCUhealth.org](mailto:James.Hart@VCUhealth.org)
 
-SNAP-PRS (SLURM Native Automated Pipeline - Polygenic Risk Scores) is a robust, light-weight, SLURM based, config-driven, pipeline for computing Polygenic Scores (PRS) using PRS-CS and PRS-CSx, scoring with PLINK2, and building a QC'd final dataset. The pipeline allows for simple setup and manual job submission, avoiding bulky workflows. If you are comfortable writing scripts directly and submitting them in SLURM, you'll feel at home with this tool.
+SNAP-PRS (SLURM Native Automated Pipeline - Polygenic Risk Scores) is a robust, light-weight, SLURM based, config-driven, pipeline for computing Polygenic Scores (PRS) using PRS-CS and PRS-CSx, scoring with PLINK2, and building a QC'd final dataset. The pipeline allows for simple setup and manual job submission, avoiding bulky workflows. If you are comfortable writing scripts directly and submitting them in SLURM, you'll feel at home and find this tool helpful.
 
 Please read the documentation below carefully before proceeding with analysis. 
 

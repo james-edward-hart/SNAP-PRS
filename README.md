@@ -55,8 +55,8 @@ This pipeline assumes **GRCh37 (hg19)**. If your data is on GRCh38, you must eit
 
 ## Quick Start
 
-Clone this full repository to your HPC (only 224kb)
-git clone https://github.com/james-edward-hart/SNAP-PRS
+Clone this full repository to your HPC (only 224kb)\
+`git clone https://github.com/james-edward-hart/SNAP-PRS`
 
 1. **Edit `config.sh`** — Set all paths and software locations
 2. **Prepare GWAS summary stats** in the required format (see below)

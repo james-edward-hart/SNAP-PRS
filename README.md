@@ -48,7 +48,7 @@ If your cluster has access to Conda channels, most of the software stack can be 
 
 ### Data
 - **LD reference panels** — UKBB LD matrices for PRS-CS/CSx (download from their GitHub repos)
-- **Genotype data** — Imputed VCFs with INFO/R2 field and dosage (DS) format
+- **Genotype data** — Imputed VCFs with INFO/R2 field and dosage (DS) format (or pre-cleaned PGEN format)
 - **GWAS summary statistics** — Formatted to the 5-column spec below
 
 ### Genome Build

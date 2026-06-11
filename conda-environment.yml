@@ -1,0 +1,30 @@
+name: snap-prs
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # Core command-line tools used by the shell pipeline.
+  - plink2
+  - bcftools
+
+  # Python runtime for PRS-CS and PRS-CSx.
+  - python
+  - numpy
+  - scipy
+  - h5py
+
+  # R runtime for the optional final QC script, prs-qc.r.
+  - r-base
+  - r-data.table
+  - r-ggplot2
+  - r-scales
+
+  # PRS-CS is available on Bioconda, but the default pipeline config expects
+  # PRSCS_DIR to point to a source directory containing PRScs.py.
+  # Uncomment this if you plan to adapt the config for the installed package.
+  # - prscs
+
+# Not included:
+# - PRS-CSx: clone or download from https://github.com/getian107/PRScsx
+# - LD reference panels: download separately from the PRS-CS/PRS-CSx docs
+# - SLURM/sbatch: use the cluster-provided scheduler commands

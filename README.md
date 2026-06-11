@@ -44,6 +44,8 @@ Cite the Zenodo DOI for this repository: [![DOI](https://zenodo.org/badge/119377
 - Python 3 with `numpy`, `scipy`, and `h5py` for PRS-CS/PRS-CSx
 - R with `data.table`, `ggplot2`, `scales` for the final `prs-qc.r` step only
 
+If your cluster has access to Conda channels, most of the software stack can be installed from Conda/Bioconda. See [`conda-environment.yml`](conda-environment.yml) for a starter environment containing PLINK2, bcftools, the Python runtime dependencies for PRS-CS/PRS-CSx, and the R packages used by `prs-qc.r`. The main exceptions are PRS-CSx, which should still be cloned or downloaded from its GitHub repository, the LD reference panels, which are external data downloads, and SLURM/`sbatch`, which should come from your cluster. PRS-CS is available from Bioconda as `prscs`, but this pipeline currently expects `PRSCS_DIR` to point to a directory containing `PRScs.py`; clone PRS-CS or adapt that path if using the Conda package.
+
 ### Data
 - **LD reference panels** — UKBB LD matrices for PRS-CS/CSx (download from their GitHub repos)
 - **Genotype data** — Imputed VCFs with INFO/R2 field and dosage (DS) format

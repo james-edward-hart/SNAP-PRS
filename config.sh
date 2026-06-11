@@ -6,6 +6,9 @@
 # All shell scripts in this pipeline source this file.
 # ============================================================================
 
+# -- Directory containing this pipeline/config file
+PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # -- Project root directory
 PROJECT_DIR="/path/to/project"
 
@@ -40,8 +43,8 @@ LOGS_DIR="${PROJECT_DIR}/Logs"
 BIM_PREFIX="${CLEANED_DIR}/genome_wide.QC"
 
 # -- Trait configuration CSVs
-TRAITS_PRSCS="${PROJECT_DIR}/PRS-Pipeline/traits_prscs.csv"
-TRAITS_PRSCSX="${PROJECT_DIR}/PRS-Pipeline/traits_prscsx.csv"
+TRAITS_PRSCS="${PIPELINE_DIR}/traits_prscs.csv"
+TRAITS_PRSCSX="${PIPELINE_DIR}/traits_prscsx.csv"
 
 # ============================================================================
 # Software paths
@@ -126,12 +129,52 @@ SCORE_COLS="2 4 6"
 # ============================================================================
 mkdir -p "$CLEANED_DIR" "$WEIGHTS_DIR" "$COMBINED_DIR" "$SCORES_DIR" "$LOGS_DIR"
 
-# -- Log software versions to SLURM output
+# -- Log step-specific software versions to SLURM output
 log_versions() {
-  echo "=== Software Versions ==="
-  "$PLINK2_EXEC" --version 2>/dev/null | head -1 || echo "plink2: not found"
-  "$BCFTOOLS_EXEC" --version 2>/dev/null | head -1 || echo "bcftools: not found"
-  "$PYTHON_BIN" --version 2>&1 || echo "python: not found"
-  R --version 2>/dev/null | head -1 || echo "R: not found"
+  local step="${1:-all}"
+
+  echo "=== Software Versions (${step}) ==="
+  case "$step" in
+    genotype_qc)
+      "$PLINK2_EXEC" --version 2>/dev/null | head -1 || echo "plink2: not found"
+      "$BCFTOOLS_EXEC" --version 2>/dev/null | head -1 || echo "bcftools: not found"
+      ;;
+    prscs|prscsx)
+      "$PYTHON_BIN" --version 2>&1 || echo "python: not found"
+      ;;
+    apply_prs)
+      "$PLINK2_EXEC" --version 2>/dev/null | head -1 || echo "plink2: not found"
+      ;;
+    all)
+      "$PLINK2_EXEC" --version 2>/dev/null | head -1 || echo "plink2: not found"
+      "$BCFTOOLS_EXEC" --version 2>/dev/null | head -1 || echo "bcftools: not found"
+      "$PYTHON_BIN" --version 2>&1 || echo "python: not found"
+      ;;
+    *)
+      echo "Unknown log_versions step: $step" >&2
+      return 1
+      ;;
+  esac
   echo "========================="
+}
+
+check_prscs_python_deps() {
+  if ! "$PYTHON_BIN" - <<'PY'
+import importlib.util
+import sys
+
+required = ("numpy", "scipy", "h5py")
+missing = [name for name in required if importlib.util.find_spec(name) is None]
+if missing:
+    print(
+        "Missing Python module(s) required by PRS-CS/PRS-CSx: "
+        + ", ".join(missing),
+        file=sys.stderr,
+    )
+    sys.exit(1)
+PY
+  then
+    echo "ERROR: PRS-CS/PRS-CSx Python environment check failed for PYTHON_BIN=${PYTHON_BIN}" >&2
+    return 1
+  fi
 }

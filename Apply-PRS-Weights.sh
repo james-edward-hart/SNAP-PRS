@@ -16,9 +16,41 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/config.sh"
-log_versions
+resolve_config() {
+  local script_dir candidate
+  local searched=()
+
+  if [[ -n "${SNAP_PRS_CONFIG:-}" ]]; then
+    searched+=("$SNAP_PRS_CONFIG")
+    if [[ -f "$SNAP_PRS_CONFIG" ]]; then
+      CONFIG_PATH="$(cd "$(dirname "$SNAP_PRS_CONFIG")" && pwd)/$(basename "$SNAP_PRS_CONFIG")"
+      return 0
+    fi
+  fi
+
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  for candidate in \
+    "${SLURM_SUBMIT_DIR:-}/config.sh" \
+    "${PWD}/config.sh" \
+    "${script_dir}/config.sh"; do
+    [[ "$candidate" == "/config.sh" ]] && continue
+    searched+=("$candidate")
+    if [[ -f "$candidate" ]]; then
+      CONFIG_PATH="$(cd "$(dirname "$candidate")" && pwd)/$(basename "$candidate")"
+      return 0
+    fi
+  done
+
+  echo "ERROR: Could not locate config.sh." >&2
+  echo "Set SNAP_PRS_CONFIG=/path/to/config.sh or submit from the repository root." >&2
+  echo "Searched:" >&2
+  printf '  %s\n' "${searched[@]}" >&2
+  exit 1
+}
+
+resolve_config
+source "$CONFIG_PATH"
+log_versions apply_prs
 
 PGEN_PREFIX="${BIM_PREFIX}"
 

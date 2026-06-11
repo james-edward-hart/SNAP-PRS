@@ -38,11 +38,11 @@ Cite the Zenodo DOI for this repository: [![DOI](https://zenodo.org/badge/119377
 ## Prerequisites
 
 ### Software
-- [PLINK2](https://www.cog-genomics.org/plink/2.0/)
-- [bcftools](http://www.htslib.org/download/)
+- [PLINK2](https://www.cog-genomics.org/plink/2.0/) for genotype QC and scoring
+- [bcftools](http://www.htslib.org/download/) for `Genotype-QC.sh` only
 - [PRS-CS](https://github.com/getian107/PRScs) and/or [PRS-CSx](https://github.com/getian107/PRScsx)
-- Python 3 with scipy, h5py, numpy
-- R with `data.table`, `ggplot2`, `scales`
+- Python 3 with `numpy`, `scipy`, and `h5py` for PRS-CS/PRS-CSx
+- R with `data.table`, `ggplot2`, `scales` for the final `prs-qc.r` step only
 
 ### Data
 - **LD reference panels** — UKBB LD matrices for PRS-CS/CSx (download from their GitHub repos)
@@ -65,6 +65,8 @@ Clone this full repository to your HPC (only 224kb)\
 5. *(Optional)* **Edit paths at the top of `prs-qc.r`** and run it for score inspection, standardization, and plots
 
 **`config.sh` is the only file you need to edit for the core pipeline (plus --array sizes in scripts).** The `prs-qc.r` script is an example post-processing step with its own path variables at the top.
+
+By default, SLURM scripts look for `config.sh` in this order: `SNAP_PRS_CONFIG`, `SLURM_SUBMIT_DIR/config.sh`, the current working directory, and the script directory. Set `SNAP_PRS_CONFIG=/path/to/config.sh` when submitting from outside the repository root or when using an alternate config file.
 
 ## GWAS Input Format
 
@@ -110,31 +112,35 @@ AlcDep2018,"AlcDep2018_EUR.txt,AlcDep2018_AFR.txt","8922,5732","EUR,AFR"
 
 Comma-separated values within quotes for multi-ancestry fields.
 
+### PRS-CS vs PRS-CSx output arguments
+
+The PRS-CS wrapper intentionally does not pass `--out_name`; PRS-CS uses `--out_dir` as the output prefix, so this pipeline passes `--out_dir="${WEIGHTS_DIR}/${OUT_NAME}"`. PRS-CSx has a different interface and still receives both `--out_dir="$WEIGHTS_DIR"` and `--out_name="$OUT_NAME"`.
+
 ## Job Submission Order
 
 Submit steps sequentially. If your cluster has a job submission cap, stagger accordingly.
 
 ```bash
 # Step 1: Genotype QC (1 job — skip if your pgen files are already QC'd)
-sbatch PRS-Pipeline/Genotype-QC.sh
+sbatch Genotype-QC.sh
 
 # Step 2: PRS-CS weights (N Analyses × 22 jobs, e.g. 5 × 22 = 110)
 # Wait for genotype QC to finish first.
-sbatch PRS-Pipeline/PRS-CS-Weights.sh
+sbatch PRS-CS-Weights.sh
 
 # Step 3: PRS-CSx weights (N Analyses × 22 jobs, e.g. 10 × 22 = 220)
 # *** Submit ONLY after all PRS-CS jobs complete to stay under 220-job cap ***
-sbatch PRS-Pipeline/PRS-CSx-Weights.sh
+sbatch PRS-CSx-Weights.sh
 
 # Step 4: Concatenate per-chromosome weights
-sbatch PRS-Pipeline/Concat-PRS-Weights.sh         # PRS-CS outputs (default)
-sbatch PRS-Pipeline/Concat-PRS-Weights.sh true     # PRS-CSx META outputs
+sbatch Concat-PRS-Weights.sh         # PRS-CS outputs (default)
+sbatch Concat-PRS-Weights.sh true     # PRS-CSx META outputs
 
 # Step 5: Score participants
-sbatch PRS-Pipeline/Apply-PRS-Weights.sh
+sbatch Apply-PRS-Weights.sh
 
 # Step 6: QC and final dataset
-Rscript PRS-Pipeline/prs-qc.r
+Rscript prs-qc.r
 ```
 
 ### Calculating `--array` sizes
@@ -179,6 +185,8 @@ Set `unrelated_file <- NULL` at the top of `prs-qc.r` to skip this filter.
 
 | Variable | Description |
 |----------|-------------|
+| `SNAP_PRS_CONFIG` | Optional environment variable pointing to the `config.sh` file to source |
+| `PIPELINE_DIR` | Directory containing the resolved `config.sh`; trait CSVs default here |
 | `PROJECT_DIR` | Root project directory |
 | `GWAS_DIR` | Formatted GWAS summary stats |
 | `VCF_DIR` | Raw imputed VCF genotype files |
